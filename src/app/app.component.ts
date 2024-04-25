@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import * as THREE from 'three';
+import { SpaceScene } from './scene/space-scene';
+import { Earth } from './models/earth';
+import { DataFetchService } from './services/data-fetch.service';
 
 
 @Component({
@@ -13,28 +16,37 @@ import * as THREE from 'three';
 export class AppComponent {
   public title = 'ISS Tracker Developed in Angular 17';
 
-  private scene!: THREE.Scene;
+  private scene: THREE.Scene;
   private width = window.innerWidth;
   private height = window.innerHeight;
   private camera!: THREE.PerspectiveCamera;
   private renderer!: THREE.WebGLRenderer;
   private cube!: THREE.Mesh;
+  private earthMesh: Earth;
 
-  constructor() {
+  constructor(private dataFetchService: DataFetchService) {
+    this.scene = new SpaceScene();
+    this.earthMesh = new Earth(this.scene);
+
     console.log(THREE);
-    this.createScene();
     this.createRenderer();
     this.createCamera();
-    this.createGeometry();
+    // this.createGeometry();
     this.addEventListener();
-    this.setBackground();
-    this.setLight();
+    // this.setBackground();
+    // this.setLight();
+
+    this.fetchData();
 
     this.render();
   }
 
-  private createScene(): void {
-    this.scene = new THREE.Scene()
+  private fetchData(): void {
+    this.dataFetchService.getISSData().subscribe( data => {
+      for (let key in data) {
+        console.log(`${key}: ${data[key]}`);
+      }
+    })
   }
 
   private createRenderer(): void {
@@ -52,7 +64,7 @@ export class AppComponent {
 
   private createGeometry(): void {
     const geometry = new THREE.BoxGeometry(2, 2, 2);
-    const material = new THREE.MeshBasicMaterial({color: 0x1ec876});
+    const material = new THREE.MeshPhongMaterial({color: 0xff0000});
     this.cube = new THREE.Mesh(geometry, material);
     this.scene.add(this.cube);
   }
@@ -67,22 +79,11 @@ export class AppComponent {
     });
   }
 
-  private setBackground(): void {
-    // Set the background color of the scene.
-    this.renderer.setClearColor(0x333F47, 1);
-  }
-
-  private setLight(): void {
-    const light = new THREE.PointLight(0xffffff);
-    light.position.set(-100,200,100);
-    this.scene.add(light);
-  }
-
   private render(): void {
     requestAnimationFrame(this.render.bind(this));
 
     // Rotate the cube around its axes.
-    this.cube.rotation.x += 0.01;
+    // this.cube.rotation.x += 0.01;
 
     // Render the scene.
     this.renderer.render(this.scene, this.camera);

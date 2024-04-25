@@ -2,25 +2,16 @@ import { Injectable } from '@angular/core';
 import { convertToRadians } from '../utils/utils';
 import * as THREE from 'three';
 import { IData } from './IData';
+import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataFetchService {
+  constructor(private http: HttpClient) { }
 
-  constructor() { }
-
-  public async fetchISSData(): Promise<IData> {
-    try {
-      const response = await fetch("https://api.wheretheiss.at/v1/satellites/25544");
-      const data = await response.json();
-  
-      return data;
-    }
-    catch (err) {
-      console.log(`API Error: ${err}`);
-      throw err; // needed for Promise<IData> since we need to return something
-    }
-    
+  public getISSData(): Observable<IData> {
+    return this.http.get<IData>("https://api.wheretheiss.at/v1/satellites/25544");
   }
 }

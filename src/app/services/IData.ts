@@ -1,4 +1,5 @@
 export interface IData {
+    [key: string]: number | string;
     name: string;
     id: number;
     latitude: number;

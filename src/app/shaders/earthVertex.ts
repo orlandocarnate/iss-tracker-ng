@@ -1,3 +1,5 @@
+export const EarthVertexShader =
+`
 varying vec2 vertexUV;
 varying vec3 vertexNormal;
 
@@ -11,3 +13,4 @@ void main() {
 
     gl_Position = projectedPosition;
 }
+`

@@ -1,3 +1,5 @@
+export const EarthFragmentShader = 
+`
 uniform sampler2D uEarthTexture;
 varying vec2 vertexUV; // [u,v]
 varying vec3 vertexNormal;
@@ -10,3 +12,4 @@ void main() {
     gl_FragColor = vec4(atmosphere + texture2D(uEarthTexture, vertexUV).xyz, 1.0);
 
 }
+`
